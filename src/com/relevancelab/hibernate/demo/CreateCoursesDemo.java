@@ -7,6 +7,7 @@ import org.hibernate.cfg.Configuration;
 import com.relevancelab.hibernate.demo.entity.Course;
 import com.relevancelab.hibernate.demo.entity.Instructor;
 import com.relevancelab.hibernate.demo.entity.InstructorDetail;
+import com.relevancelab.hibernate.demo.entity.Student;
 
 public class CreateCoursesDemo {
 
@@ -17,13 +18,14 @@ public class CreateCoursesDemo {
 								.addAnnotatedClass(Instructor.class)
 								.addAnnotatedClass(InstructorDetail.class)
 								.addAnnotatedClass(Course.class)
+								.addAnnotatedClass(Student.class)
 								.buildSessionFactory();
 		
 		Session session = factory.getCurrentSession();
 		
 		try {
 			
-			System.out.println("Creating new instructor object...");
+			System.out.println("Fetch the instructor object...");
 			
 			session.beginTransaction();
 			
@@ -32,8 +34,10 @@ public class CreateCoursesDemo {
 			
 			System.out.println("The instructor is "+theInstructor);
 			
-			Course course1 = new Course("Introduction to PHP");
-			Course course2 = new Course("Introduction to MySQL");
+			System.out.println("Create new courses...");
+			
+			Course course1 = new Course("Introduction to Java");
+			Course course2 = new Course("J2EE");
 			
 			theInstructor.addCourse(course1);
 			theInstructor.addCourse(course2);
