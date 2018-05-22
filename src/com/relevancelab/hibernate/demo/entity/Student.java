@@ -11,13 +11,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="instructor")
-public class Instructor {
+@Table(name="student")
+public class Student {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -33,30 +33,22 @@ public class Instructor {
 	@Column(name="email")
 	private String email;
 	
-	@OneToOne(cascade=CascadeType.ALL)
-	@JoinColumn(name="instructor_detail_id")
-	private InstructorDetail instructorDetail;
-	
-	/**
-	 * This code was used for OneToMany, Bidirectional 
-	 * and Lazy Loading Mapping with the course table.
-	 */
-	//@OneToMany(mappedBy="instructor", cascade=CascadeType.ALL)
-	//private List<Course> courses;
-	
-		
-	/**
-	 * OneToMany, Unidirectional and Eager Loading Mapping
-	 */
-	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	@JoinColumn(name="instructor_id") //In this case the join column is in the other table
+	//Many to many relations ship is set using a join table course_student
+	//A similar entry is added in the Course entity class is also
+	@ManyToMany(fetch=FetchType.LAZY, cascade= {CascadeType.PERSIST, CascadeType.MERGE,
+			  									CascadeType.DETACH, CascadeType.REFRESH})
+	@JoinTable(
+		name="course_student",
+		joinColumns=@JoinColumn(name="student_id"),
+		inverseJoinColumns=@JoinColumn(name="course_id")
+	)
 	private List<Course> courses;
 	
-	public Instructor() {
+	public Student() {
 		
 	}
 
-	public Instructor(String firstName, String lastName, String email) {
+	public Student(String firstName, String lastName, String email) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
@@ -94,26 +86,17 @@ public class Instructor {
 		this.email = email;
 	}
 
-	public InstructorDetail getInstructorDetail() {
-		return instructorDetail;
-	}
-
-	public void setInstructorDetail(InstructorDetail instructorDetail) {
-		this.instructorDetail = instructorDetail;
-	}
-
-	@Override
-	public String toString() {
-		return "Instructor [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
-				+ "]";
-	}
-
 	public List<Course> getCourses() {
 		return courses;
 	}
 
 	public void setCourses(List<Course> courses) {
 		this.courses = courses;
+	}
+
+	@Override
+	public String toString() {
+		return "Student [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + "]";
 	}
 	
 	public void addCourse(Course newCourse) {
@@ -123,8 +106,8 @@ public class Instructor {
 		}
 		
 		courses.add(newCourse);
-		
-		newCourse.setInstructor(this);
 	}
 	
+	
+
 }
